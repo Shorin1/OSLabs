@@ -22,6 +22,8 @@ namespace Lab3WinForm
         {
             commandDict = new Dictionary<string, Action<Command>>
             {
+                { "help", Help }, // Список команд
+
                 { "maxname", SetMaxName }, // Задать макс длину файла
                 { "cd", Cd }, // Переход по каталогам
                 { "ls", Ls }, // Показ содержимого текущего каталога
@@ -81,6 +83,14 @@ namespace Lab3WinForm
             var commandParams = commandSplit.Skip(1).ToArray();
 
             return new Command(commandName, commandParams);
+        }
+
+        private void Help(Command command)
+        {
+            foreach (var key in commandDict.Keys)
+            {
+                logTextBox.AppendText(key + "\r\n");
+            }
         }
 
         private void Cd(Command command)
