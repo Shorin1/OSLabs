@@ -33,6 +33,7 @@ namespace Lab3WinForm
             this.commandTextBox = new System.Windows.Forms.TextBox();
             this.executeBtn = new System.Windows.Forms.Button();
             this.currentDirTextBox = new System.Windows.Forms.TextBox();
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.SuspendLayout();
             // 
             // logTextBox
