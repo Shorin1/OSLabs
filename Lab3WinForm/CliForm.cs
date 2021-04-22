@@ -118,7 +118,7 @@ namespace Lab3WinForm
                 throw new Exception("Длина имени файла не задана");
             }
 
-            if (int.TryParse(command.Params[0], out int maxLength))
+            if (!int.TryParse(command.Params[0], out int maxLength))
             {
                 throw new Exception("Длина файла должно быть числом");
             }
