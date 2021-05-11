@@ -5,9 +5,11 @@ VisualStudioVersion = 16.0.31205.134
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lab1", "OSLabs\Lab1.csproj", "{0DE0CE5A-D172-4F5C-9B96-CF4D482A2275}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lab3", "Lab3\Lab3.csproj", "{3E90446B-D98B-49EB-91E7-6043F25B4AB0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lab3", "Lab3\Lab3.csproj", "{3E90446B-D98B-49EB-91E7-6043F25B4AB0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lab3WinForm", "Lab3WinForm\Lab3WinForm.csproj", "{1686F919-25B9-4A36-B57B-154FCE696E29}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lab3WinForm", "Lab3WinForm\Lab3WinForm.csproj", "{1686F919-25B9-4A36-B57B-154FCE696E29}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lab4WinForm", "Lab4WinForm\Lab4WinForm.csproj", "{37137996-7C25-4B34-A610-DBD533C9D112}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{1686F919-25B9-4A36-B57B-154FCE696E29}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1686F919-25B9-4A36-B57B-154FCE696E29}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1686F919-25B9-4A36-B57B-154FCE696E29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37137996-7C25-4B34-A610-DBD533C9D112}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37137996-7C25-4B34-A610-DBD533C9D112}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37137996-7C25-4B34-A610-DBD533C9D112}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37137996-7C25-4B34-A610-DBD533C9D112}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
