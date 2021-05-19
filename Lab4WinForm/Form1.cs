@@ -115,9 +115,12 @@ namespace Lab4WinForm
 
         private void button1_Click(object sender, EventArgs e)
         {
-            dataGridView1.Columns.Add(new DataGridViewTextBoxColumn() { Name = "DeviceID" });
-            dataGridView1.Columns.Add(new DataGridViewTextBoxColumn() { Name = "PNPDeviceID" });
-            dataGridView1.Columns.Add(new DataGridViewTextBoxColumn() { Name = "Description" });
+            dataGridView1.Columns.AddRange(new[]
+            {
+                new DataGridViewTextBoxColumn() { Name = "DeviceID" },
+                new DataGridViewTextBoxColumn() { Name = "PNPDeviceID" },
+                new DataGridViewTextBoxColumn() { Name = "Description" }
+            });
 
             var thread = new Thread(new ParameterizedThreadStart(obj => ViewUsbDevices()));
             thread.Start();
@@ -134,9 +137,9 @@ namespace Lab4WinForm
                     {
                         var row = new string[]
                         {
-                        (string)device.GetPropertyValue("DeviceID"),
-                        (string)device.GetPropertyValue("PNPDeviceID"),
-                        (string)device.GetPropertyValue("Description")
+                            (string)device.GetPropertyValue("DeviceID"),
+                            (string)device.GetPropertyValue("PNPDeviceID"),
+                            (string)device.GetPropertyValue("Description")
                         };
 
                         Invoke(new Action(() => dataGridView1.Rows.Add(row)));
