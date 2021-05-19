@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Management;
+using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Lab4WinForm
@@ -53,7 +57,7 @@ namespace Lab4WinForm
 
             var fileName = "text.txt";
             var text = inputTextBox.Text;
-            
+
             // Блокируем чтоб новые операции на чтение-запись ждали пока закончатся предыдущие
             buttonSemaphore.WaitOne();
 
@@ -104,9 +108,44 @@ namespace Lab4WinForm
                 // Высвобождаем семафор чтения-записи
                 readWriteSemaphore.Release();
             }
-            
+
             // Высвобождаем семафор потока в котором начинаются операции чтения-записи
             buttonSemaphore.Release();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            dataGridView1.Columns.Add(new DataGridViewTextBoxColumn() { Name = "DeviceID" });
+            dataGridView1.Columns.Add(new DataGridViewTextBoxColumn() { Name = "PNPDeviceID" });
+            dataGridView1.Columns.Add(new DataGridViewTextBoxColumn() { Name = "Description" });
+
+            var thread = new Thread(new ParameterizedThreadStart(obj => ViewUsbDevices()));
+            thread.Start();
+        }
+
+        private void ViewUsbDevices()
+        {
+            while(true)
+            {
+                using (var searcher = new ManagementObjectSearcher(@"Select * From Win32_USBHub"))
+                using (var collection = searcher.Get())
+                {
+                    foreach (var device in collection)
+                    {
+                        var row = new string[]
+                        {
+                        (string)device.GetPropertyValue("DeviceID"),
+                        (string)device.GetPropertyValue("PNPDeviceID"),
+                        (string)device.GetPropertyValue("Description")
+                        };
+
+                        Invoke(new Action(() => dataGridView1.Rows.Add(row)));
+                    }
+                }
+
+                Thread.Sleep(2000);
+                Invoke(new Action(() => dataGridView1.Rows.Clear()));
+            }
         }
     }
 }

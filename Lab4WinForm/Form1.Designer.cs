@@ -34,6 +34,9 @@ namespace Lab4WinForm
             this.speedTextBox = new System.Windows.Forms.TextBox();
             this.runButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
             // inputTextBox
@@ -65,7 +68,7 @@ namespace Lab4WinForm
             // 
             this.runButton.Location = new System.Drawing.Point(472, 31);
             this.runButton.Name = "runButton";
-            this.runButton.Size = new System.Drawing.Size(75, 23);
+            this.runButton.Size = new System.Drawing.Size(186, 23);
             this.runButton.TabIndex = 3;
             this.runButton.Text = "Начать";
             this.runButton.UseVisualStyleBackColor = true;
@@ -80,11 +83,32 @@ namespace Lab4WinForm
             this.label1.TabIndex = 4;
             this.label1.Text = "Скорость";
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(369, 60);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(289, 33);
+            this.button1.TabIndex = 5;
+            this.button1.Text = "Информация об устройствах";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // dataGridView1
+            // 
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Location = new System.Drawing.Point(369, 99);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.RowTemplate.Height = 25;
+            this.dataGridView1.Size = new System.Drawing.Size(289, 317);
+            this.dataGridView1.TabIndex = 6;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(659, 429);
+            this.ClientSize = new System.Drawing.Size(670, 429);
+            this.Controls.Add(this.dataGridView1);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.runButton);
             this.Controls.Add(this.speedTextBox);
@@ -92,6 +116,7 @@ namespace Lab4WinForm
             this.Controls.Add(this.inputTextBox);
             this.Name = "Form1";
             this.Text = "Form1";
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -104,6 +129,8 @@ namespace Lab4WinForm
         private System.Windows.Forms.TextBox speedTextBox;
         private System.Windows.Forms.Button runButton;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.DataGridView dataGridView1;
     }
 }
 
