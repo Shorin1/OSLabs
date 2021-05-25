@@ -12,34 +12,17 @@ namespace Lab4WinForm
     public partial class Form1 : Form
     {
         public delegate void InvokeDelegate();
-
-        /// <summary>
-        /// Семафор для потока, в котором происходит чтение-запись
-        /// </summary>
-        private readonly Semaphore buttonSemaphore;
-
-        /// <summary>
-        /// Семафор для запуска потоков, чтобы чтение не начиналось раньше записи
-        /// </summary>
-        private readonly Semaphore startThreadsSemaphore;
-
-        /// <summary>
-        /// Семафор на чтение-запись. Пока происходит чтение запись невозможна
-        /// </summary>
-        private readonly Semaphore readWriteSemaphore;
-
-        /// <summary>
-        /// Флаг означающий конец текста для записи
-        /// </summary>
-        private bool isEnd;
+        private bool isEnd = false;
 
         public Form1()
         {
-            isEnd = false;
-            buttonSemaphore = new Semaphore(1, 1);
-            startThreadsSemaphore = new Semaphore(1, 1);
-            readWriteSemaphore = new Semaphore(1, 1);
             InitializeComponent();
+            dataGridView1.Columns.AddRange(new[]
+           {
+                new DataGridViewTextBoxColumn() { Name = "DeviceID" },
+                new DataGridViewTextBoxColumn() { Name = "PNPDeviceID" },
+                new DataGridViewTextBoxColumn() { Name = "Description" }
+            });
         }
 
         private void runButton_Click(object sender, EventArgs e)
@@ -56,98 +39,79 @@ namespace Lab4WinForm
             int.TryParse(speedTextBox.Text, out int delay);
 
             var fileName = "text.txt";
-            var text = inputTextBox.Text;
 
-            // Блокируем чтоб новые операции на чтение-запись ждали пока закончатся предыдущие
-            buttonSemaphore.WaitOne();
-
-            var writeThread = new Thread(new ThreadStart(() => Write(fileName, text, delay)));
+            var writeThread = new Thread(new ThreadStart(() => Write(fileName, delay)));
             writeThread.Start();
 
-            // Блокируем чтоб чтения не начиналось раньше записи
-            startThreadsSemaphore.WaitOne();
-
-            var readThread = new Thread(new ThreadStart(() => Read(fileName)));
+            var readThread = new Thread(new ThreadStart(() => Read(fileName, delay)));
             readThread.Start();
         }
 
-        private void Write(string fileName, string text, int delay)
+        private void Write(string fileName, int delay)
         {
-            foreach (var letter in text)
+            while (true)
             {
-                // Блокируем поток чтобы чтение не начиналось пока не закончилась запись
-                readWriteSemaphore.WaitOne();
-                using (var sw = new StreamWriter(fileName, true))
+                var text = GetUsbDevicesInfo();
+                try
                 {
-                    sw.Write(letter);
-                }
-                Thread.Sleep(delay);
-                // Высвобождаем семафор чтения-записи
-                readWriteSemaphore.Release();
-                // Высвобождаем семафор синхранизации старта задач 
-                startThreadsSemaphore.Release();
-            }
-
-            isEnd = true;
-        }
-
-        private void Read(string fileName)
-        {
-            while (!isEnd)
-            {
-                // Ждем окончания блокировки семафора синхронизации старта задач
-                startThreadsSemaphore.WaitOne();
-                // Ждем окончания блокировки семафора синхронизации чтения-записи
-                readWriteSemaphore.WaitOne();
-                using (var sr = new StreamReader(fileName))
-                {
-                    var text = sr.ReadToEnd();
-                    // ui поток не позволяет обращаться к нему из других потоков поэтому юзаем такой костыль
-                    outputTextBox.BeginInvoke(new InvokeDelegate(() => outputTextBox.Text = text));
-                }
-                // Высвобождаем семафор чтения-записи
-                readWriteSemaphore.Release();
-            }
-
-            // Высвобождаем семафор потока в котором начинаются операции чтения-записи
-            buttonSemaphore.Release();
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            dataGridView1.Columns.AddRange(new[]
-            {
-                new DataGridViewTextBoxColumn() { Name = "DeviceID" },
-                new DataGridViewTextBoxColumn() { Name = "PNPDeviceID" },
-                new DataGridViewTextBoxColumn() { Name = "Description" }
-            });
-
-            var thread = new Thread(new ParameterizedThreadStart(obj => ViewUsbDevices()));
-            thread.Start();
-        }
-
-        private void ViewUsbDevices()
-        {
-            while(true)
-            {
-                using (var searcher = new ManagementObjectSearcher(@"Select * From Win32_USBHub"))
-                using (var collection = searcher.Get())
-                {
-                    foreach (var device in collection)
+                    using (var sw = new StreamWriter(fileName, false, Encoding.Default))
                     {
-                        var row = new string[]
+                        foreach (var row in text)
                         {
+                            foreach (var col in row)
+                            {
+                                sw.Write(col + "\t");
+                            }
+                            sw.Write("\n");
+                        }
+                    }
+                    Thread.Sleep(delay);
+                }
+                catch (IOException) { }
+            }
+        }
+
+        private void Read(string fileName, int delay)
+        {
+            while (true)
+            {
+                try
+                {
+                    string text;
+
+                    using (var sr = new StreamReader(fileName))
+                    {
+                        text = sr.ReadToEnd();
+                    }
+
+                    var rows = text.Split('\n');
+
+                    foreach (var row in rows)
+                    {
+                        Invoke(new Action(() => dataGridView1.Rows.Add(row.Split('\t'))));
+                    }
+
+                    Thread.Sleep(delay);
+                    Invoke(new Action(() => dataGridView1.Rows.Clear()));
+                }
+                catch (IOException) { }
+            }
+        }
+
+        private IEnumerable<string[]> GetUsbDevicesInfo()
+        {
+            using (var searcher = new ManagementObjectSearcher(@"Select * From Win32_USBHub"))
+            using (var collection = searcher.Get())
+            {
+                foreach (var device in collection)
+                {
+                    yield return new string[]
+                    {
                             (string)device.GetPropertyValue("DeviceID"),
                             (string)device.GetPropertyValue("PNPDeviceID"),
                             (string)device.GetPropertyValue("Description")
-                        };
-
-                        Invoke(new Action(() => dataGridView1.Rows.Add(row)));
-                    }
+                    };
                 }
-
-                Thread.Sleep(2000);
-                Invoke(new Action(() => dataGridView1.Rows.Clear()));
             }
         }
     }
